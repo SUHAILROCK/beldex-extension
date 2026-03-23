@@ -23,15 +23,15 @@
   "content_scripts": [
     {
       "matches": [
-        "*://*.binance.com/*",
-        "*://*.coinbase.com/*",
-        "*://*.kucoin.com/*",
-        "*://*.bybit.com/*",
-        "*://*.okx.com/*",
-        "*://*.gate.io/*",
-        "*://*.mexc.com/*",
-        "*://*.bitget.com/*",
-        "*://*.crypto.com/*"
+        "https://www.binance.com/*",
+        "https://www.coinbase.com/*",
+        "https://www.kucoin.com/*",
+        "https://www.bybit.com/*",
+        "https://www.okx.com/*",
+        "https://www.gate.io/*",
+        "https://www.mexc.com/*",
+        "https://www.bitget.com/*",
+        "https://www.crypto.com/*"
       ],
       "js": ["content.js"]
     }

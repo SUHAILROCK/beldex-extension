@@ -1,34 +1,9 @@
-// ── helpers ──────────────────────────────────────────────────
-const g = id => document.getElementById(id);
-const s = (id, v) => { const e = g(id); if (e) e.textContent = v; };
-const now = () => new Date().toLocaleTimeString('en-US', { hour12: false });
+// helpers (g, s, now, fp, fc, constants) loaded from common.js
 
 let priceUSD = 0, priceINR = 0, currency = 'usd';
 let marketData = null;
 let chart = null, series = null, chartType = 'area';
 let currentDays = 7;
-
-function fp(n, cur) {
-  cur = cur || 'usd';
-  if (!n && n !== 0) return '—';
-  const sym = cur === 'inr' ? '₹' : '$';
-  const locale = cur === 'inr' ? 'en-IN' : 'en-US';
-  if (n < 0.001) return sym + n.toFixed(6);
-  if (n < 0.01)  return sym + n.toFixed(5);
-  if (n < 1)     return sym + n.toFixed(4);
-  return sym + n.toLocaleString(locale, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-}
-function fc(n, cur) {
-  if (!n) return '—';
-  if (cur === 'inr') {
-    if (n >= 1e7) return '₹' + (n / 1e7).toFixed(2) + ' Cr';
-    if (n >= 1e5) return '₹' + (n / 1e5).toFixed(2) + ' L';
-    return '₹' + n.toLocaleString('en-IN');
-  }
-  if (n >= 1e9) return '$' + (n / 1e9).toFixed(2) + 'B';
-  if (n >= 1e6) return '$' + (n / 1e6).toFixed(2) + 'M';
-  return '$' + n.toLocaleString('en-US');
-}
 
 // ── CURRENCY SWITCH ──────────────────────────────────────────
 document.querySelectorAll('.csw-btn').forEach(btn => {
@@ -113,7 +88,6 @@ function initChart() {
 
   createSeries();
 
-  // Resize observer
   const ro = new ResizeObserver(() => {
     chart.applyOptions({ width: container.clientWidth });
   });
@@ -122,7 +96,6 @@ function initChart() {
 
 function createSeries() {
   if (!chart) return;
-  // Remove old series
   if (series) {
     chart.removeSeries(series);
     series = null;
@@ -154,8 +127,8 @@ async function fetchChartData(days) {
 
   try {
     const cur = currency;
-    const url = `https://api.coingecko.com/api/v3/coins/beldex/market_chart?vs_currency=${cur}&days=${days}`;
-    const r = await fetch(url);
+    const url = `${CG_BASE}/coins/beldex/market_chart?vs_currency=${cur}&days=${days}`;
+    const r = await fetch(url, { signal: AbortSignal.timeout(FETCH_TIMEOUT) });
     if (!r.ok) throw new Error('CG chart ' + r.status);
     const d = await r.json();
 
@@ -163,24 +136,20 @@ async function fetchChartData(days) {
     if (!series) createSeries();
 
     if (chartType === 'area') {
-      // Line/area data: [[timestamp, price], ...]
       const data = d.prices.map(([t, v]) => ({
         time: Math.floor(t / 1000),
         value: v,
       }));
       series.setData(data);
     } else {
-      // Build OHLC candles from price data
       const candles = buildCandles(d.prices, days);
       series.setData(candles);
     }
 
     chart.timeScale().fitContent();
 
-    // Cache
     chrome.storage.local.set({ chartCache: { days, cur, data: d, ts: Date.now() } });
   } catch (e) {
-    // Try cache
     chrome.storage.local.get('chartCache', ({ chartCache }) => {
       if (!chartCache || chartCache.days !== days) return;
       if (!chart) initChart();
@@ -200,7 +169,6 @@ async function fetchChartData(days) {
 }
 
 function buildCandles(prices, days) {
-  // Group prices into candle intervals
   const interval = days <= 1 ? 3600 : days <= 7 ? 14400 : days <= 30 ? 86400 : 604800;
   const buckets = {};
 
@@ -252,14 +220,15 @@ g('ct-candle').addEventListener('click', () => {
 async function fetchPrice() {
   try {
     const r = await fetch(
-      'https://api.coingecko.com/api/v3/coins/beldex?localization=false&tickers=false&community_data=false&developer_data=false'
+      CG_BASE + '/coins/beldex?localization=false&tickers=false&community_data=false&developer_data=false',
+      { signal: AbortSignal.timeout(FETCH_TIMEOUT) }
     );
     if (!r.ok) throw new Error('CG ' + r.status);
     const d = await r.json();
     const m = d.market_data;
 
     priceUSD = m.current_price.usd;
-    priceINR = m.current_price.inr || priceUSD * 84;
+    priceINR = m.current_price.inr || 0;
     marketData = m;
 
     const chg = m.price_change_percentage_24h || 0;
@@ -277,7 +246,7 @@ async function fetchPrice() {
     chrome.storage.local.get('priceCache', ({ priceCache }) => {
       if (!priceCache) return;
       priceUSD = priceCache.usd;
-      priceINR = priceCache.inr || priceCache.usd * 84;
+      priceINR = priceCache.inr || 0;
       updatePriceDisplay();
       s('sp-ts', 'cached');
     });
@@ -287,8 +256,9 @@ async function fetchPrice() {
 // ── NETWORK DATA ─────────────────────────────────────────────
 async function fetchNetwork() {
   try {
-    const r = await fetch('https://bdx-companion-api.vercel.app/api/explorer', {
-      headers: { 'x-api-key': 'bdx-comp-2024-s3cur3-k3y' }
+    const r = await fetch(BDX_API_URL, {
+      headers: { 'x-api-key': BDX_API_KEY },
+      signal: AbortSignal.timeout(FETCH_TIMEOUT)
     });
     if (!r.ok) throw new Error('API ' + r.status);
     const j = await r.json();
