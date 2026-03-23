@@ -29,7 +29,19 @@
 
     const title = document.createElement('span');
     title.style.cssText = 'font-size:12px;font-weight:700;color:#e2ecf8';
-    title.innerHTML = '<svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-1px;margin-right:4px"><rect x="3" y="7" width="10" height="8" rx="1.5"/><path d="M5 7V5a3 3 0 016 0v2"/></svg>';
+    const svgNS = 'http://www.w3.org/2000/svg';
+    const svgIcon = document.createElementNS(svgNS, 'svg');
+    svgIcon.setAttribute('width', '12'); svgIcon.setAttribute('height', '12');
+    svgIcon.setAttribute('viewBox', '0 0 16 16'); svgIcon.setAttribute('fill', 'none');
+    svgIcon.setAttribute('stroke', 'currentColor'); svgIcon.setAttribute('stroke-width', '1.5');
+    svgIcon.setAttribute('stroke-linecap', 'round'); svgIcon.setAttribute('stroke-linejoin', 'round');
+    svgIcon.style.cssText = 'vertical-align:-1px;margin-right:4px';
+    const r1 = document.createElementNS(svgNS, 'rect');
+    r1.setAttribute('x', '3'); r1.setAttribute('y', '7'); r1.setAttribute('width', '10'); r1.setAttribute('height', '8'); r1.setAttribute('rx', '1.5');
+    const p1 = document.createElementNS(svgNS, 'path');
+    p1.setAttribute('d', 'M5 7V5a3 3 0 016 0v2');
+    svgIcon.appendChild(r1); svgIcon.appendChild(p1);
+    title.appendChild(svgIcon);
     title.appendChild(document.createTextNode('BelScope Privacy Tip'));
 
     const closeBtn = document.createElement('button');
