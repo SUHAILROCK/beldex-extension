@@ -74,6 +74,17 @@ function updatePriceDisplay() {
     s('p-h24', fp(h24, cur));
     s('p-l24', fp(l24, cur));
     s('p-ath', fp(ath, cur));
+    // Supply in Indian vs Western format
+    const sup = m.circulating_supply;
+    if (sup) {
+      if (cur === 'inr') {
+        if (sup >= 1e7) s('p-sup', (sup / 1e7).toFixed(2) + ' Cr BDX');
+        else if (sup >= 1e5) s('p-sup', (sup / 1e5).toFixed(2) + ' L BDX');
+        else s('p-sup', sup.toLocaleString('en-IN') + ' BDX');
+      } else {
+        s('p-sup', (sup / 1e9).toFixed(2) + 'B BDX');
+      }
+    }
   }
 }
 
