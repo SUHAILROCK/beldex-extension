@@ -228,7 +228,9 @@ async function fetchPrice() {
 // ── NETWORK DATA ──────────────────────────────────────────────
 async function fetchNetwork() {
   try {
-    const r = await fetch('https://bdx-companion-api.vercel.app/api/explorer');
+    const r = await fetch('https://bdx-companion-api.vercel.app/api/explorer', {
+      headers: { 'x-api-key': 'bdx-comp-2024-s3cur3-k3y' }
+    });
     if (!r.ok) throw new Error('API ' + r.status);
     const j = await r.json();
     if (!j.ok) throw new Error(j.error);
