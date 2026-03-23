@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Beldex Companion — Chart</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Space+Mono:wght@400;700&display=swap');
+
+:root {
+  --bg: #04080f;
+  --s1: #080f1a;
+  --s2: #0d1623;
+  --s3: #111d2e;
+  --gold: #f5a623;
+  --gold2: #ffd166;
+  --glow: rgba(245,166,35,0.18);
+  --green: #06d6a0;
+  --red: #ef476f;
+  --blue: #118ab2;
+  --purple: #a855f7;
+  --cyan: #00d4ff;
+  --text: #e2ecf8;
+  --muted: #4a6080;
+  --dim: #1a2840;
+  --border: rgba(255,255,255,0.06);
+  --border2: rgba(255,255,255,0.10);
+}
+
+* { margin:0; padding:0; box-sizing:border-box; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Space Grotesk', sans-serif;
+  overflow-y: auto;
+  overflow-x: hidden;
+  min-height: 100vh;
+}
+
+body::after {
+  content:'';
+  position:fixed; inset:0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+  pointer-events:none; z-index:999; opacity:0.4;
+}
+
+/* ── HEADER ── */
+.sp-hdr {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 14px 18px;
+  background: linear-gradient(135deg, var(--s2), var(--s1));
+  border-bottom: 1px solid var(--border2);
+  position: relative; overflow: hidden;
+}
+.sp-hdr::before {
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0; height: 1px;
+  background: linear-gradient(90deg, transparent, var(--gold), transparent);
+}
+.sp-hdr-left {
+  display: flex; align-items: center; gap: 10px;
+}
+.sp-dot {
+  width: 9px; height: 9px; border-radius: 50%;
+  background: var(--gold);
+  box-shadow: 0 0 0 2px rgba(245,166,35,0.2), 0 0 12px var(--gold);
+  animation: throb 2s ease-in-out infinite;
+}
+@keyframes throb {
+  0%,100% { box-shadow: 0 0 0 2px rgba(245,166,35,0.2), 0 0 10px var(--gold); }
+  50%      { box-shadow: 0 0 0 5px rgba(245,166,35,0.1), 0 0 20px var(--gold); }
+}
+.sp-hdr-name {
+  font-size: 15px; font-weight: 700; letter-spacing: -0.3px;
+  color: var(--text);
+}
+.sp-hdr-name em { color: var(--gold); font-style: normal; }
+.sp-hdr-right { display: flex; align-items: center; gap: 8px; }
+.live-tag {
+  display: flex; align-items: center; gap: 5px;
+  font-family: 'Space Mono', monospace;
+  font-size: 9px; letter-spacing: 0.12em;
+  color: var(--green); padding: 3px 9px;
+  background: rgba(6,214,160,0.08);
+  border: 1px solid rgba(6,214,160,0.2);
+  border-radius: 20px;
+}
+.live-blink {
+  width: 5px; height: 5px; border-radius: 50%;
+  background: var(--green);
+  animation: blink 1s ease-in-out infinite;
+}
+@keyframes blink { 0%,100%{opacity:1}50%{opacity:0.1} }
+
+/* ── PRICE HERO ── */
+.sp-price-hero {
+  padding: 18px 18px 14px;
+  background: linear-gradient(160deg, var(--s2) 0%, var(--s1) 100%);
+  border-bottom: 1px solid var(--border);
+  position: relative; overflow: hidden;
+}
+.sp-price-hero::after {
+  content: 'BDX';
+  position: absolute; right: 16px; top: 50%; transform: translateY(-50%);
+  font-family: 'Space Mono', monospace;
+  font-size: 56px; font-weight: 700; color: rgba(245,166,35,0.04);
+  letter-spacing: -2px; pointer-events: none;
+}
+.sp-ph-top {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 4px;
+}
+.sp-ph-label {
+  font-family: 'Space Mono', monospace;
+  font-size: 9px; color: var(--muted); letter-spacing: 0.12em;
+}
+.curr-sw {
+  display: flex; background: var(--dim); border-radius: 4px; padding: 2px; gap: 2px;
+}
+.csw-btn {
+  font-family: 'Space Mono', monospace;
+  font-size: 8px; padding: 3px 8px; border-radius: 3px;
+  border: none; cursor: pointer; background: transparent;
+  color: var(--muted); transition: all 0.15s; letter-spacing: 0.06em;
+}
+.csw-btn.on { background: var(--gold); color: #000; font-weight: 700; }
+.sp-price {
+  font-family: 'Space Mono', monospace;
+  font-size: 30px; font-weight: 700; letter-spacing: -1px;
+  background: linear-gradient(135deg, #fff 0%, var(--gold2) 100%);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  background-clip: text; line-height: 1.1; margin: 6px 0 8px;
+}
+.sp-meta {
+  display: flex; align-items: center; gap: 10px;
+}
+.sp-change {
+  font-family: 'Space Mono', monospace;
+  font-size: 11px; font-weight: 700;
+  padding: 3px 10px; border-radius: 4px;
+}
+.sp-change.up { color: var(--green); background: rgba(6,214,160,0.12); }
+.sp-change.dn { color: var(--red); background: rgba(239,71,111,0.12); }
+.sp-change.nt { color: var(--muted); background: var(--dim); }
+.sp-inr {
+  font-family: 'Space Mono', monospace;
+  font-size: 11px; color: var(--muted);
+}
+
+/* ── CHART SECTION ── */
+.chart-section {
+  background: var(--s1);
+  border-bottom: 1px solid var(--border);
+}
+.chart-controls {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 10px 18px;
+  border-bottom: 1px solid var(--border);
+}
+.range-btns {
+  display: flex; gap: 4px;
+}
+.range-btn {
+  font-family: 'Space Mono', monospace;
+  font-size: 10px; padding: 5px 12px; border-radius: 4px;
+  border: 1px solid var(--border2); cursor: pointer;
+  background: transparent; color: var(--muted);
+  transition: all 0.15s; letter-spacing: 0.04em;
+}
+.range-btn:hover { color: var(--text); border-color: var(--muted); }
+.range-btn.on {
+  background: var(--gold); color: #000; font-weight: 700;
+  border-color: var(--gold);
+}
+.chart-type-btns {
+  display: flex; gap: 4px;
+}
+.ct-btn {
+  width: 28px; height: 28px; border-radius: 4px;
+  border: 1px solid var(--border2); cursor: pointer;
+  background: transparent; color: var(--muted);
+  display: flex; align-items: center; justify-content: center;
+  transition: all 0.15s;
+}
+.ct-btn:hover { color: var(--text); border-color: var(--muted); }
+.ct-btn.on { background: var(--dim); color: var(--gold); border-color: rgba(245,166,35,0.3); }
+
+#chart-container {
+  width: 100%;
+  height: 300px;
+  position: relative;
+}
+.chart-loading {
+  position: absolute; inset: 0;
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Space Mono', monospace;
+  font-size: 11px; color: var(--muted); letter-spacing: 0.06em;
+}
+.chart-loading.hide { display: none; }
+
+/* ── STAT BAND ── */
+.sp-stat-band {
+  display: grid; grid-template-columns: 1fr 1fr 1fr;
+  border-bottom: 1px solid var(--border);
+}
+.sp-sb-cell {
+  padding: 12px 14px; border-right: 1px solid var(--border);
+  position: relative;
+}
+.sp-sb-cell:last-child { border-right: none; }
+.sp-sb-cell::before {
+  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1.5px;
+}
+.sbc-gold::before { background: var(--gold); }
+.sbc-green::before { background: var(--green); }
+.sbc-purple::before { background: var(--purple); }
+.sp-sb-lbl {
+  font-family: 'Space Mono', monospace;
+  font-size: 7px; letter-spacing: 0.12em; text-transform: uppercase;
+  color: var(--muted); margin-bottom: 5px;
+}
+.sp-sb-val { font-size: 13px; font-weight: 700; }
+.sp-sb-val.gold { color: var(--gold); }
+.sp-sb-val.green { color: var(--green); }
+.sp-sb-val.purple { color: var(--purple); }
+
+/* ── PRICE ROWS ── */
+.sp-price-rows { padding: 6px 0; border-bottom: 1px solid var(--border); }
+.sp-pr-row {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 8px 18px; border-bottom: 1px solid rgba(255,255,255,0.04);
+  transition: background 0.15s;
+}
+.sp-pr-row:last-child { border-bottom: none; }
+.sp-pr-row:hover { background: rgba(255,255,255,0.015); }
+.sp-pr-left { display: flex; align-items: center; gap: 10px; }
+.sp-pr-icon {
+  width: 26px; height: 26px; border-radius: 6px;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+.pri-green { background: rgba(6,214,160,0.1); }
+.pri-red { background: rgba(239,71,111,0.1); }
+.pri-gold { background: rgba(245,166,35,0.1); }
+.sp-pr-label { font-size: 11px; color: var(--muted); }
+.sp-pr-val { font-family: 'Space Mono', monospace; font-size: 12px; font-weight: 700; }
+.sp-pr-val.green { color: var(--green); }
+.sp-pr-val.red { color: var(--red); }
+.sp-pr-val.gold { color: var(--gold); }
+
+/* ── NETWORK SECTION ── */
+.sp-net-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 10px 18px; background: var(--s2);
+  border-bottom: 1px solid var(--border);
+}
+.sp-net-title {
+  font-family: 'Space Mono', monospace;
+  font-size: 9px; letter-spacing: 0.14em; color: var(--muted);
+  text-transform: uppercase;
+}
+.sp-net-sync {
+  font-family: 'Space Mono', monospace;
+  font-size: 8px; color: var(--muted);
+}
+.sp-net-sync span { color: var(--cyan); }
+
+.sp-net-grid {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 1px; background: var(--border);
+}
+.sp-nr {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 10px 14px; background: var(--s1);
+  transition: background 0.15s;
+}
+.sp-nr:hover { background: rgba(255,255,255,0.02); }
+.sp-nr-left { display: flex; align-items: center; gap: 8px; }
+.sp-nr-ico {
+  width: 26px; height: 26px; border-radius: 6px;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+.ni-gold { background: rgba(245,166,35,0.1); }
+.ni-green { background: rgba(6,214,160,0.1); }
+.ni-red { background: rgba(239,71,111,0.1); }
+.ni-purple { background: rgba(168,85,247,0.1); }
+.ni-blue { background: rgba(0,212,255,0.1); }
+.ni-dim { background: var(--dim); }
+.ni-orange { background: rgba(255,152,0,0.1); }
+.sp-nr-label { font-size: 10px; color: var(--text); font-weight: 500; }
+.sp-nr-right { display: flex; align-items: center; gap: 5px; }
+.sp-nr-val {
+  font-family: 'Space Mono', monospace;
+  font-size: 11px; font-weight: 700;
+}
+.sp-nr-val.gold { color: var(--gold); }
+.sp-nr-val.green { color: var(--green); }
+.sp-nr-val.red { color: var(--red); }
+.sp-nr-val.purple { color: var(--purple); }
+.sp-nr-val.cyan { color: var(--cyan); }
+.sp-nr-val.orange { color: #ff9800; }
+.sp-nr-val.dim { color: var(--muted); }
+.sp-live-pip {
+  width: 4px; height: 4px; border-radius: 50%;
+  background: var(--green); box-shadow: 0 0 4px var(--green);
+  flex-shrink: 0;
+}
+
+/* ── FOOTER ── */
+.sp-footer {
+  padding: 10px 18px;
+  font-family: 'Space Mono', monospace;
+  font-size: 8px; color: var(--muted); text-align: center;
+  letter-spacing: 0.06em;
+}
+.sp-footer span { color: var(--gold); }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="sp-hdr">
+  <div class="sp-hdr-left">
+    <div class="sp-dot"></div>
+    <div class="sp-hdr-name">Beldex <em>Companion</em></div>
+  </div>
+  <div class="sp-hdr-right">
+    <div class="live-tag"><div class="live-blink"></div>LIVE</div>
+  </div>
+</div>
+
+<!-- PRICE HERO -->
+<div class="sp-price-hero">
+  <div class="sp-ph-top">
+    <div class="sp-ph-label">BDX / LIVE MARKET PRICE</div>
+    <div class="curr-sw">
+      <button class="csw-btn on" data-cur="usd">USD</button>
+      <button class="csw-btn" data-cur="inr">INR</button>
+    </div>
+  </div>
+  <div class="sp-price" id="sp-price">$0.0000</div>
+  <div class="sp-meta">
+    <div class="sp-change nt" id="sp-chg">—</div>
+    <div class="sp-inr" id="sp-inr-row"></div>
+  </div>
+</div>
+
+<!-- CHART -->
+<div class="chart-section">
+  <div class="chart-controls">
+    <div class="range-btns">
+      <button class="range-btn" data-days="1">1D</button>
+      <button class="range-btn on" data-days="7">7D</button>
+      <button class="range-btn" data-days="30">30D</button>
+      <button class="range-btn" data-days="365">1Y</button>
+    </div>
+    <div class="chart-type-btns">
+      <button class="ct-btn on" id="ct-area" title="Area chart">
+        <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 12 5 7 9 10 15 3"/></svg>
+      </button>
+      <button class="ct-btn" id="ct-candle" title="Candlestick">
+        <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="2" x2="4" y2="14"/><rect x="2" y="5" width="4" height="6" rx="0.5" fill="currentColor"/><line x1="12" y1="2" x2="12" y2="14"/><rect x="10" y="4" width="4" height="5" rx="0.5"/></svg>
+      </button>
+    </div>
+  </div>
+  <div id="chart-container">
+    <div class="chart-loading" id="chart-loading">Loading chart data...</div>
+  </div>
+</div>
+
+<!-- STAT BAND -->
+<div class="sp-stat-band">
+  <div class="sp-sb-cell sbc-gold">
+    <div class="sp-sb-lbl">Market Cap</div>
+    <div class="sp-sb-val gold" id="sp-mcap">—</div>
+  </div>
+  <div class="sp-sb-cell sbc-green">
+    <div class="sp-sb-lbl">24h Volume</div>
+    <div class="sp-sb-val green" id="sp-vol">—</div>
+  </div>
+  <div class="sp-sb-cell sbc-purple">
+    <div class="sp-sb-lbl">Supply</div>
+    <div class="sp-sb-val purple" id="sp-sup">—</div>
+  </div>
+</div>
+
+<!-- PRICE ROWS -->
+<div class="sp-price-rows">
+  <div class="sp-pr-row">
+    <div class="sp-pr-left">
+      <div class="sp-pr-icon pri-green"><svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="14" x2="8" y2="2"/><polyline points="3 6 8 2 13 6"/></svg></div>
+      <div class="sp-pr-label">24h High</div>
+    </div>
+    <div class="sp-pr-val green" id="sp-h24">—</div>
+  </div>
+  <div class="sp-pr-row">
+    <div class="sp-pr-left">
+      <div class="sp-pr-icon pri-red"><svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="2" x2="8" y2="14"/><polyline points="3 10 8 14 13 10"/></svg></div>
+      <div class="sp-pr-label">24h Low</div>
+    </div>
+    <div class="sp-pr-val red" id="sp-l24">—</div>
+  </div>
+  <div class="sp-pr-row">
+    <div class="sp-pr-left">
+      <div class="sp-pr-icon pri-gold"><svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 2h8v5a4 4 0 01-8 0V2z"/><path d="M4 4H2a1 1 0 00-1 1v1a3 3 0 003 3"/><path d="M12 4h2a1 1 0 011 1v1a3 3 0 01-3 3"/><line x1="8" y1="11" x2="8" y2="13"/><line x1="5" y1="14" x2="11" y2="14"/></svg></div>
+      <div class="sp-pr-label">All-Time High</div>
+    </div>
+    <div class="sp-pr-val gold" id="sp-ath">—</div>
+  </div>
+</div>
+
+<!-- NETWORK -->
+<div class="sp-net-header">
+  <div class="sp-net-title">Chain Data · explorer.beldex.io</div>
+  <div class="sp-net-sync">Sync: <span id="sp-net-ts">—</span></div>
+</div>
+<div class="sp-net-grid">
+  <div class="sp-nr">
+    <div class="sp-nr-left">
+      <div class="sp-nr-ico ni-gold"><svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 5l6-3 6 3v6l-6 3-6-3V5z"/><line x1="2" y1="5" x2="8" y2="8"/><line x1="14" y1="5" x2="8" y2="8"/><line x1="8" y1="8" x2="8" y2="14"/></svg></div>
+      <div class="sp-nr-label">Block Height</div>
+    </div>
+    <div class="sp-nr-right">
+      <div class="sp-nr-val cyan" id="sp-height">—</div>
+      <div class="sp-live-pip" id="sp-pip-height"></div>
+    </div>
+  </div>
+  <div class="sp-nr">
+    <div class="sp-nr-left">
+      <div class="sp-nr-ico ni-green"><svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="1" width="12" height="5" rx="1"/><rect x="2" y="10" width="12" height="5" rx="1"/><circle cx="5" cy="3.5" r="0.5" fill="currentColor" stroke="none"/><circle cx="5" cy="12.5" r="0.5" fill="currentColor" stroke="none"/></svg></div>
+      <div class="sp-nr-label">MasterNodes</div>
+    </div>
+    <div class="sp-nr-right">
+      <div class="sp-nr-val green" id="sp-nodes">—</div>
+      <div class="sp-live-pip" id="sp-pip-nodes"></div>
+    </div>
+  </div>
+  <div class="sp-nr">
+    <div class="sp-nr-left">
+      <div class="sp-nr-ico ni-red"><svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 1C5.5 5 3 7 3 10a5 5 0 0010 0c0-3-2-5.5-5-9z"/></svg></div>
+      <div class="sp-nr-label">BDX Burned</div>
+    </div>
+    <div class="sp-nr-right">
+      <div class="sp-nr-val red" id="sp-burned">—</div>
+      <div class="sp-live-pip" id="sp-pip-burned"></div>
+    </div>
+  </div>
+  <div class="sp-nr">
+    <div class="sp-nr-left">
+      <div class="sp-nr-ico ni-purple"><svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="8" r="2.5"/><path d="M10.5 5.5v3a1.5 1.5 0 003 0V8a5.5 5.5 0 10-3 4.9"/></svg></div>
+      <div class="sp-nr-label">BNS Names</div>
+    </div>
+    <div class="sp-nr-right">
+      <div class="sp-nr-val purple" id="sp-bns">—</div>
+      <div class="sp-live-pip" id="sp-pip-bns"></div>
+    </div>
+  </div>
+  <div class="sp-nr">
+    <div class="sp-nr-left">
+      <div class="sp-nr-ico ni-blue"><svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 6 8 2 15 6"/><polyline points="1 8 8 12 15 8"/><polyline points="1 10 8 14 15 10"/></svg></div>
+      <div class="sp-nr-label">TX Pool</div>
+    </div>
+    <div class="sp-nr-right">
+      <div class="sp-nr-val cyan" id="sp-pool">—</div>
+      <div class="sp-live-pip" id="sp-pip-pool"></div>
+    </div>
+  </div>
+  <div class="sp-nr">
+    <div class="sp-nr-left">
+      <div class="sp-nr-ico ni-gold"><svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="9 1 3 9 8 9 7 15 13 7 8 7 9 1"/></svg></div>
+      <div class="sp-nr-label">Base Fee</div>
+    </div>
+    <div class="sp-nr-right">
+      <div class="sp-nr-val gold" id="sp-fee">—</div>
+    </div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<div class="sp-footer">Updated: <span id="sp-ts">—</span></div>
+
+<script src="libs/lightweight-charts.js"></script>
+<script src="sidepanel.js"></script>
+</body>
+</html>

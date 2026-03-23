@@ -97,6 +97,17 @@ body::after {
   font-family: 'Space Mono', monospace;
   font-size: 8px; color: var(--muted);
 }
+.sp-toggle {
+  width: 28px; height: 28px; border-radius: 6px;
+  border: 1px solid var(--border2); cursor: pointer;
+  background: var(--dim); color: var(--muted);
+  display: flex; align-items: center; justify-content: center;
+  transition: all 0.2s;
+}
+.sp-toggle:hover {
+  color: var(--gold); border-color: rgba(245,166,35,0.3);
+  background: rgba(245,166,35,0.08);
+}
 
 /* ── NAV ── */
 .nav {
@@ -231,6 +242,36 @@ body::after {
 .pr-val.green { color: var(--green); }
 .pr-val.red { color: var(--red); }
 .pr-val.gold { color: var(--gold); }
+
+/* sparkline */
+.sparkline-wrap {
+  padding: 6px 18px 0;
+  border-bottom: 1px solid var(--border);
+}
+.sparkline-box {
+  width: 100%; height: 70px;
+  position: relative; overflow: hidden;
+  border-radius: 6px; background: var(--s1);
+}
+.sparkline-box svg { display: block; width: 100%; height: 100%; }
+.sparkline-label {
+  font-family: 'Space Mono', monospace;
+  font-size: 7px; color: var(--muted); letter-spacing: 0.1em;
+  text-transform: uppercase; text-align: center;
+  padding: 4px 0 2px;
+}
+.open-chart-btn {
+  display: flex; align-items: center; justify-content: center; gap: 6px;
+  width: calc(100% - 36px); margin: 6px 18px 10px;
+  padding: 8px; border-radius: 6px; border: 1px solid var(--border2);
+  background: var(--s2); color: var(--muted); cursor: pointer;
+  font-family: 'Space Mono', monospace; font-size: 9px;
+  letter-spacing: 0.08em; transition: all 0.2s;
+}
+.open-chart-btn:hover {
+  color: var(--gold); border-color: rgba(245,166,35,0.3);
+  background: rgba(245,166,35,0.05);
+}
 
 .ts-row {
   padding: 8px 18px;
@@ -508,6 +549,9 @@ body::after {
     <div class="hdr-name">Beldex <em>Companion</em></div>
   </div>
   <div class="hdr-right">
+    <button class="sp-toggle" id="sp-toggle-btn" title="Open Side Panel">
+      <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="2" width="14" height="12" rx="1.5"/><line x1="10" y1="2" x2="10" y2="14"/><polyline points="6 7 8 9 6 11"/></svg>
+    </button>
     <div class="live-tag"><div class="live-blink"></div>LIVE</div>
     <div class="ver-tag">v1.0</div>
   </div>
@@ -565,6 +609,18 @@ body::after {
         <div class="sb-val purple" id="p-sup">—</div>
       </div>
     </div>
+
+    <!-- SPARKLINE -->
+    <div class="sparkline-wrap">
+      <div class="sparkline-box" id="sparkline-box">
+        <svg id="sparkline-svg" viewBox="0 0 344 70" preserveAspectRatio="none"></svg>
+      </div>
+      <div class="sparkline-label">7-Day Price</div>
+    </div>
+    <button class="open-chart-btn" id="open-chart-btn">
+      <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 12 5 7 9 10 15 3"/><polyline points="10 3 15 3 15 8"/></svg>
+      OPEN FULL CHART
+    </button>
 
     <div class="price-rows">
       <div class="pr-row">

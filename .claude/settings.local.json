@@ -6,7 +6,10 @@
       "Bash(curl -s -w \"\\\\nHTTP_STATUS: %{http_code}\" \"https://explorer.beldex.io/api/search?value=suhail.bdx\")",
       "Bash(curl -s -w \"\\\\nHTTP_STATUS: %{http_code}\" \"https://explorer.beldex.io/api/bns_names\")",
       "Bash(curl -s -X POST \"https://explorer.beldex.io/api/bns_names_by_owners\" -H \"Content-Type: application/json\" -d '{\"\"entries\"\":[\"\"suhail\"\"]}')",
-      "Bash(curl -s \"https://public.beldex.io/json_rpc\" -X POST -H \"Content-Type: application/json\" -d '{\"\"jsonrpc\"\":\"\"2.0\"\",\"\"id\"\":\"\"0\"\",\"\"method\"\":\"\"bns_names_to_owners\"\",\"\"params\"\":{\"\"entries\"\":[{\"\"name_hash\"\":\"\"suhail\"\",\"\"types\"\":[0]}]}}')"
+      "Bash(curl -s \"https://public.beldex.io/json_rpc\" -X POST -H \"Content-Type: application/json\" -d '{\"\"jsonrpc\"\":\"\"2.0\"\",\"\"id\"\":\"\"0\"\",\"\"method\"\":\"\"bns_names_to_owners\"\",\"\"params\"\":{\"\"entries\"\":[{\"\"name_hash\"\":\"\"suhail\"\",\"\"types\"\":[0]}]}}')",
+      "Bash(find \"c:\\\\Users\\\\saravanas\\\\Downloads\\\\beldex-extension-FINAL\\(1\\)\\\\beldex-extension\" -type f -name \"*.json\" -o -name \"*.html\" -o -name \"*.js\" -o -name \"*.css\")",
+      "Bash(ls -la \"c:\\\\Users\\\\saravanas\\\\Downloads\\\\beldex-extension-FINAL\\(1\\)\\\\beldex-extension\")",
+      "Bash(ls -la \"c:\\\\Users\\\\saravanas\\\\Downloads\\\\beldex-extension-FINAL\\(1\\)\\\\beldex-extension\\\\icons\")"
     ]
   }
 }

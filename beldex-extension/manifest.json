@@ -36,10 +36,14 @@
       "js": ["content.js"]
     }
   ],
+  "side_panel": {
+    "default_path": "sidepanel.html"
+  },
   "permissions": [
     "storage",
     "alarms",
-    "activeTab"
+    "activeTab",
+    "sidePanel"
   ],
   "host_permissions": [
     "https://api.coingecko.com/*",

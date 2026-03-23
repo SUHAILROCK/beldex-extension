@@ -1,9 +1,21 @@
 chrome.runtime.onInstalled.addListener(() => {
   chrome.alarms.create('bdx-refresh', { periodInMinutes: 5 });
+  chrome.sidePanel.setPanelBehavior({ openPanelOnActionClick: false }).catch(() => {});
 });
 
 chrome.alarms.onAlarm.addListener(alarm => {
   if (alarm.name === 'bdx-refresh') refreshPrice();
+});
+
+// Listen for "open side panel" message from popup
+chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
+  if (msg.action === 'openSidePanel') {
+    chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+      if (tabs[0]) {
+        chrome.sidePanel.open({ tabId: tabs[0].id }).catch(() => {});
+      }
+    });
+  }
 });
 
 async function refreshPrice() {

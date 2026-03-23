@@ -279,6 +279,70 @@ function dimPip(id) {
   if (e) { e.style.background = '#4a6080'; e.style.boxShadow = 'none'; }
 }
 
+// ── SPARKLINE ────────────────────────────────────────────────
+async function fetchSparkline() {
+  try {
+    const cur = currency;
+    const r = await fetch(
+      `https://api.coingecko.com/api/v3/coins/beldex/market_chart?vs_currency=${cur}&days=7`
+    );
+    if (!r.ok) throw new Error('CG chart ' + r.status);
+    const d = await r.json();
+    drawSparkline(d.prices);
+    chrome.storage.local.set({ sparkCache: { cur, prices: d.prices, ts: Date.now() } });
+  } catch (e) {
+    chrome.storage.local.get('sparkCache', ({ sparkCache }) => {
+      if (sparkCache && sparkCache.prices) drawSparkline(sparkCache.prices);
+    });
+  }
+}
+
+function drawSparkline(prices) {
+  const svg = g('sparkline-svg');
+  if (!svg || !prices || prices.length < 2) return;
+
+  const vals = prices.map(p => p[1]);
+  const min = Math.min(...vals);
+  const max = Math.max(...vals);
+  const range = max - min || 1;
+  const w = 344, h = 70, pad = 4;
+
+  // Build path
+  const points = vals.map((v, i) => {
+    const x = (i / (vals.length - 1)) * w;
+    const y = pad + ((max - v) / range) * (h - pad * 2);
+    return `${x.toFixed(1)},${y.toFixed(1)}`;
+  });
+
+  const isUp = vals[vals.length - 1] >= vals[0];
+  const color = isUp ? '#06d6a0' : '#ef476f';
+
+  // Area fill
+  const areaPath = `M0,${h} L${points.join(' L')} L${w},${h} Z`;
+  // Line
+  const linePath = `M${points.join(' L')}`;
+
+  svg.innerHTML =
+    `<defs><linearGradient id="sfill" x1="0" y1="0" x2="0" y2="1">` +
+    `<stop offset="0%" stop-color="${color}" stop-opacity="0.25"/>` +
+    `<stop offset="100%" stop-color="${color}" stop-opacity="0"/>` +
+    `</linearGradient></defs>` +
+    `<path d="${areaPath}" fill="url(#sfill)"/>` +
+    `<path d="${linePath}" fill="none" stroke="${color}" stroke-width="1.5"/>`;
+}
+
+// ── OPEN SIDE PANEL ──────────────────────────────────────────
+function openSidePanel() {
+  chrome.runtime.sendMessage({ action: 'openSidePanel' });
+}
+
+const chartBtn = g('open-chart-btn');
+if (chartBtn) chartBtn.addEventListener('click', openSidePanel);
+
+const spBtn = g('sp-toggle-btn');
+if (spBtn) spBtn.addEventListener('click', openSidePanel);
+
 // ── INIT ──────────────────────────────────────────────────────
 fetchPrice();
 fetchNetwork();
+fetchSparkline();
