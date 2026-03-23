@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
-  "name": "Beldex Companion",
+  "name": "BelScope",
   "version": "1.0.0",
-  "description": "Live BDX price, network stats, BNS checker, and privacy alerts for the Beldex ecosystem.",
+  "description": "BelScope — Live BDX price, charts, network stats, BNS checker, and privacy alerts for the Beldex ecosystem.",
   "icons": {
     "16": "icons/icon16.png",
     "48": "icons/icon48.png",
@@ -10,7 +10,7 @@
   },
   "action": {
     "default_popup": "popup.html",
-    "default_title": "Beldex Companion",
+    "default_title": "BelScope",
     "default_icon": {
       "16": "icons/icon16.png",
       "48": "icons/icon48.png",

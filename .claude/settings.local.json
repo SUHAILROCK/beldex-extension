@@ -9,7 +9,11 @@
       "Bash(curl -s \"https://public.beldex.io/json_rpc\" -X POST -H \"Content-Type: application/json\" -d '{\"\"jsonrpc\"\":\"\"2.0\"\",\"\"id\"\":\"\"0\"\",\"\"method\"\":\"\"bns_names_to_owners\"\",\"\"params\"\":{\"\"entries\"\":[{\"\"name_hash\"\":\"\"suhail\"\",\"\"types\"\":[0]}]}}')",
       "Bash(find \"c:\\\\Users\\\\saravanas\\\\Downloads\\\\beldex-extension-FINAL\\(1\\)\\\\beldex-extension\" -type f -name \"*.json\" -o -name \"*.html\" -o -name \"*.js\" -o -name \"*.css\")",
       "Bash(ls -la \"c:\\\\Users\\\\saravanas\\\\Downloads\\\\beldex-extension-FINAL\\(1\\)\\\\beldex-extension\")",
-      "Bash(ls -la \"c:\\\\Users\\\\saravanas\\\\Downloads\\\\beldex-extension-FINAL\\(1\\)\\\\beldex-extension\\\\icons\")"
+      "Bash(ls -la \"c:\\\\Users\\\\saravanas\\\\Downloads\\\\beldex-extension-FINAL\\(1\\)\\\\beldex-extension\\\\icons\")",
+      "Bash(node --version)",
+      "Bash(npm --version)",
+      "Bash(node generate-icons.js)",
+      "Bash(npx --yes sharp-cli -i icons/icon128.svg -o icons/icon128.png)"
     ]
   }
 }

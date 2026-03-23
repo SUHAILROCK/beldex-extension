@@ -1,0 +1,21 @@
+<svg width="128" height="128" viewBox="0 0 128 128" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#f5a623"/>
+      <stop offset="100%" stop-color="#ffd166"/>
+    </linearGradient>
+    <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="4" result="blur"/>
+      <feComposite in="SourceGraphic" in2="blur" operator="over"/>
+    </filter>
+  </defs>
+  <rect width="128" height="128" rx="28" fill="#080f1a"/>
+  <!-- Outer scope ring -->
+  <circle cx="64" cy="64" r="38" stroke="url(#grad)" stroke-width="8" fill="none" filter="url(#glow)"/>
+  <!-- Inner core -->
+  <circle cx="64" cy="64" r="14" fill="url(#grad)" filter="url(#glow)"/>
+  <!-- Crosshairs -->
+  <path d="M64 16v12M64 100v12M16 64h12M100 64h12" stroke="url(#grad)" stroke-width="8" stroke-linecap="round"/>
+  <!-- Scope handle/lens reflection -->
+  <path d="M92 92l16 16" stroke="url(#grad)" stroke-width="10" stroke-linecap="round"/>
+</svg>

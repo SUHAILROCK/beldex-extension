@@ -30,7 +30,7 @@
     const title = document.createElement('span');
     title.style.cssText = 'font-size:12px;font-weight:700;color:#e2ecf8';
     title.innerHTML = '<svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-1px;margin-right:4px"><rect x="3" y="7" width="10" height="8" rx="1.5"/><path d="M5 7V5a3 3 0 016 0v2"/></svg>';
-    title.appendChild(document.createTextNode('Beldex Privacy Tip'));
+    title.appendChild(document.createTextNode('BelScope Privacy Tip'));
 
     const closeBtn = document.createElement('button');
     closeBtn.style.cssText = 'background:none;border:none;color:#4a6080;cursor:pointer;font-size:18px;line-height:1;padding:0';
@@ -58,7 +58,7 @@
     // CTA button
     const cta = document.createElement('button');
     cta.style.cssText = 'width:100%;background:linear-gradient(135deg,#f5a623,#ffd166);color:#000;border:none;border-radius:6px;padding:8px;font-size:11px;font-weight:700;cursor:pointer;letter-spacing:0.04em';
-    cta.textContent = 'LEARN ABOUT BELDEX \u2192';
+    cta.textContent = 'LEARN MORE \u2192';
     cta.addEventListener('click', () => window.open('https://beldex.io', '_blank'));
 
     // Footer links

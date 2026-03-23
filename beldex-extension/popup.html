@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Beldex Companion</title>
+<title>BelScope</title>
 <style>
 /* Space Grotesk — latin */
 @font-face {
@@ -97,15 +97,9 @@ body::after {
 .hdr-logo {
   display: flex; align-items: center; gap: 10px;
 }
-.hdr-dot {
-  width: 9px; height: 9px; border-radius: 50%;
-  background: var(--gold);
-  box-shadow: 0 0 0 2px rgba(245,166,35,0.2), 0 0 12px var(--gold);
-  animation: throb 2s ease-in-out infinite;
-}
-@keyframes throb {
-  0%,100% { box-shadow: 0 0 0 2px rgba(245,166,35,0.2), 0 0 10px var(--gold); }
-  50%      { box-shadow: 0 0 0 5px rgba(245,166,35,0.1), 0 0 20px var(--gold); }
+.hdr-icon {
+  flex-shrink: 0;
+  filter: drop-shadow(0 0 6px rgba(245,166,35,0.4));
 }
 .hdr-name {
   font-size: 15px; font-weight: 700; letter-spacing: -0.3px;
@@ -580,12 +574,12 @@ body::after {
 <!-- HEADER -->
 <div class="hdr">
   <div class="hdr-logo">
-    <div class="hdr-dot"></div>
-    <div class="hdr-name">Beldex <em>Companion</em></div>
+    <svg class="hdr-icon" width="22" height="22" viewBox="0 0 24 24" fill="none"><circle cx="11" cy="11" r="8" stroke="var(--gold)" stroke-width="2"/><circle cx="11" cy="11" r="3" fill="var(--gold)"/><path d="M11 3v2M11 17v2M3 11h2M17 11h2" stroke="var(--gold)" stroke-width="2" stroke-linecap="round"/><path d="M16 16l4.5 4.5" stroke="var(--gold)" stroke-width="2" stroke-linecap="round"/></svg>
+    <div class="hdr-name">Bel<em>Scope</em></div>
   </div>
   <div class="hdr-right">
     <button class="sp-toggle" id="sp-toggle-btn" title="Open Side Panel">
-      <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="2" width="14" height="12" rx="1.5"/><line x1="10" y1="2" x2="10" y2="14"/><polyline points="6 7 8 9 6 11"/></svg>
+      <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="2" width="14" height="12" rx="2"/><line x1="10" y1="2" x2="10" y2="14"/><path d="M6 8l2 2-2 2" fill="none"/></svg>
     </button>
     <div class="live-tag"><div class="live-blink"></div>LIVE</div>
     <div class="ver-tag">v1.0</div>
@@ -595,19 +589,19 @@ body::after {
 <!-- NAV -->
 <div class="nav">
   <div class="nav-item on" data-tab="price">
-    <div class="nav-icon"><svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 12 5 7 9 10 15 3"/><polyline points="10 3 15 3 15 8"/></svg></div>
+    <div class="nav-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M7 14l4-4 4 4 6-6"/><path d="M18 8h3v3"/></svg></div>
     <span>Price</span>
   </div>
   <div class="nav-item" data-tab="network">
-    <div class="nav-icon"><svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="8" r="7"/><ellipse cx="8" cy="8" rx="3" ry="7"/><line x1="1" y1="8" x2="15" y2="8"/></svg></div>
+    <div class="nav-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="16" y="16" width="6" height="6" rx="1"/><rect x="2" y="16" width="6" height="6" rx="1"/><rect x="9" y="2" width="6" height="6" rx="1"/><path d="M5 16v-3a4 4 0 014-4h6a4 4 0 014 4v3"/><path d="M12 12V8"/></svg></div>
     <span>Network</span>
   </div>
   <div class="nav-item" data-tab="bns">
-    <div class="nav-icon"><svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M1 3h10l4 5-4 5H1V3z"/><circle cx="4" cy="8" r="1" fill="currentColor" stroke="none"/></svg></div>
+    <div class="nav-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><circle cx="8" cy="12" r="3"/><path d="M14 10h4"/><path d="M14 14h2"/></svg></div>
     <span>BNS</span>
   </div>
   <div class="nav-item" data-tab="links">
-    <div class="nav-icon"><svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6.5 9.5a3.5 3.5 0 005 0l2-2a3.5 3.5 0 00-5-5l-1 1"/><path d="M9.5 6.5a3.5 3.5 0 00-5 0l-2 2a3.5 3.5 0 005 5l1-1"/></svg></div>
+    <div class="nav-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="2"/><rect x="14" y="3" width="7" height="7" rx="2"/><rect x="14" y="14" width="7" height="7" rx="2"/><rect x="3" y="14" width="7" height="7" rx="2"/></svg></div>
     <span>Links</span>
   </div>
 </div>
@@ -653,28 +647,28 @@ body::after {
       <div class="sparkline-label">7-Day Price</div>
     </div>
     <button class="open-chart-btn" id="open-chart-btn">
-      <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 12 5 7 9 10 15 3"/><polyline points="10 3 15 3 15 8"/></svg>
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 3v6"/><path d="M21 3h-6"/><path d="M21 3l-7 7"/><path d="M14 14l-4-4L3 17"/></svg>
       OPEN FULL CHART
     </button>
 
     <div class="price-rows">
       <div class="pr-row">
         <div class="pr-left">
-          <div class="pr-icon pri-green"><svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="14" x2="8" y2="2"/><polyline points="3 6 8 2 13 6"/></svg></div>
+          <div class="pr-icon pri-green"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5"/><path d="M5 12l7-7 7 7"/></svg></div>
           <div class="pr-label">24h High</div>
         </div>
         <div class="pr-val green" id="p-h24">—</div>
       </div>
       <div class="pr-row">
         <div class="pr-left">
-          <div class="pr-icon pri-red"><svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="2" x2="8" y2="14"/><polyline points="3 10 8 14 13 10"/></svg></div>
+          <div class="pr-icon pri-red"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14"/><path d="M19 12l-7 7-7-7"/></svg></div>
           <div class="pr-label">24h Low</div>
         </div>
         <div class="pr-val red" id="p-l24">—</div>
       </div>
       <div class="pr-row">
         <div class="pr-left">
-          <div class="pr-icon pri-gold"><svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 2h8v5a4 4 0 01-8 0V2z"/><path d="M4 4H2a1 1 0 00-1 1v1a3 3 0 003 3"/><path d="M12 4h2a1 1 0 011 1v1a3 3 0 01-3 3"/><line x1="8" y1="11" x2="8" y2="13"/><line x1="5" y1="14" x2="11" y2="14"/></svg></div>
+          <div class="pr-icon pri-gold"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></div>
           <div class="pr-label">All-Time High</div>
         </div>
         <div class="pr-val gold" id="p-ath">—</div>
@@ -695,7 +689,7 @@ body::after {
     <div class="net-rows">
       <div class="nr">
         <div class="nr-left">
-          <div class="nr-ico ni-gold"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 5l6-3 6 3v6l-6 3-6-3V5z"/><line x1="2" y1="5" x2="8" y2="8"/><line x1="14" y1="5" x2="8" y2="8"/><line x1="8" y1="8" x2="8" y2="14"/></svg></div>
+          <div class="nr-ico ni-gold"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg></div>
           <div class="nr-info">
             <div class="nr-label">Block Height</div>
             <div class="nr-desc">Blocks confirmed since 2018</div>
@@ -708,7 +702,7 @@ body::after {
       </div>
       <div class="nr">
         <div class="nr-left">
-          <div class="nr-ico ni-green"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="1" width="12" height="5" rx="1"/><rect x="2" y="10" width="12" height="5" rx="1"/><circle cx="5" cy="3.5" r="0.5" fill="currentColor" stroke="none"/><circle cx="5" cy="12.5" r="0.5" fill="currentColor" stroke="none"/><line x1="8" y1="6" x2="8" y2="10"/></svg></div>
+          <div class="nr-ico ni-green"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="18" r="3"/><circle cx="6" cy="6" r="3"/><circle cx="18" cy="6" r="3"/><path d="M8.12 8.12L15.88 15.88"/><path d="M6 9v3a4 4 0 004 4h8"/></svg></div>
           <div class="nr-info">
             <div class="nr-label">Active MasterNodes</div>
             <div class="nr-desc">Validating the network</div>
@@ -721,7 +715,7 @@ body::after {
       </div>
       <div class="nr">
         <div class="nr-left">
-          <div class="nr-ico ni-red"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 1C5.5 5 3 7 3 10a5 5 0 0010 0c0-3-2-5.5-5-9z"/><path d="M8 16a2 2 0 002-2c0-1.5-2-3-2-3s-2 1.5-2 3a2 2 0 002 2z"/></svg></div>
+          <div class="nr-ico ni-red"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8.5 14.5A2.5 2.5 0 0011 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 11-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 002.5 2.5z"/></svg></div>
           <div class="nr-info">
             <div class="nr-label">Total BDX Burned</div>
             <div class="nr-desc">Permanently destroyed</div>
@@ -734,7 +728,7 @@ body::after {
       </div>
       <div class="nr">
         <div class="nr-left">
-          <div class="nr-ico ni-purple"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="8" r="2.5"/><path d="M10.5 5.5v3a1.5 1.5 0 003 0V8a5.5 5.5 0 10-3 4.9"/></svg></div>
+          <div class="nr-ico ni-purple"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 22h14a2 2 0 002-2V7.5L14.5 2H6a2 2 0 00-2 2v4"/><polyline points="14 2 14 8 20 8"/><path d="M2 15h10"/><path d="M5 12l-3 3 3 3"/></svg></div>
           <div class="nr-info">
             <div class="nr-label">BNS Registrations</div>
             <div class="nr-desc">Names registered on-chain</div>
@@ -747,7 +741,7 @@ body::after {
       </div>
       <div class="nr">
         <div class="nr-left">
-          <div class="nr-ico ni-blue"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 6 8 2 15 6"/><polyline points="1 8 8 12 15 8"/><polyline points="1 10 8 14 15 10"/></svg></div>
+          <div class="nr-ico ni-blue"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg></div>
           <div class="nr-info">
             <div class="nr-label">TX Pool</div>
             <div class="nr-desc">Waiting to be confirmed</div>
@@ -760,7 +754,7 @@ body::after {
       </div>
       <div class="nr">
         <div class="nr-left">
-          <div class="nr-ico ni-dim"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="8" cy="4" rx="6" ry="2"/><path d="M2 4v8c0 1.1 2.7 2 6 2s6-.9 6-2V4"/><path d="M2 8c0 1.1 2.7 2 6 2s6-.9 6-2"/></svg></div>
+          <div class="nr-ico ni-dim"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg></div>
           <div class="nr-info">
             <div class="nr-label">Blockchain Size</div>
             <div class="nr-desc">Full node storage needed</div>
@@ -772,7 +766,7 @@ body::after {
       </div>
       <div class="nr">
         <div class="nr-left">
-          <div class="nr-ico ni-gold"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="9 1 3 9 8 9 7 15 13 7 8 7 9 1"/></svg></div>
+          <div class="nr-ico ni-gold"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2A10 10 0 1022 12 10 10 0 0012 2"/><path d="M12 6v6l4 2"/></svg></div>
           <div class="nr-info">
             <div class="nr-label">Base Fee</div>
             <div class="nr-desc">Per output in a transaction</div>
@@ -784,7 +778,7 @@ body::after {
       </div>
       <div class="nr">
         <div class="nr-left">
-          <div class="nr-ico ni-orange"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="7 1 1 9 6 9 5 15 11 7 6 7 7 1"/><polygon points="12 1 8 7 11 7 10 12 14 6 11 6 12 1"/></svg></div>
+          <div class="nr-ico ni-orange"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></div>
           <div class="nr-info">
             <div class="nr-label">Flash Fee</div>
             <div class="nr-desc">Instant 2-second confirm</div>
@@ -827,7 +821,7 @@ body::after {
     </div>
 
     <div class="bns-burn-note">
-      <div class="bbn-icon"><svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 1C5.5 5 3 7 3 10a5 5 0 0010 0c0-3-2-5.5-5-9z"/><path d="M8 16a2 2 0 002-2c0-1.5-2-3-2-3s-2 1.5-2 3a2 2 0 002 2z"/></svg></div>
+      <div class="bbn-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8.5 14.5A2.5 2.5 0 0011 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 11-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 002.5 2.5z"/></svg></div>
       <div class="bbn-text"><strong>BNS names burn BDX permanently.</strong> Every registration destroys BDX from the total supply. The more names registered, the scarcer BDX becomes.</div>
     </div>
   </div>
@@ -838,42 +832,42 @@ body::after {
   <div class="links-panel">
     <div class="links-grid">
       <a class="lk l-guide" data-url="https://beldex-guide-project.vercel.app">
-        <div class="lk-icon lki-gold"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M1 2.5A1.5 1.5 0 012.5 1H7v13H2.5A1.5 1.5 0 011 12.5V2.5z"/><path d="M15 2.5A1.5 1.5 0 0013.5 1H9v13h4.5a1.5 1.5 0 001.5-1.5V2.5z"/></svg></div>
+        <div class="lk-icon lki-gold"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg></div>
         <div class="lk-text">
           <div class="lk-title">Visual Guide</div>
           <div class="lk-sub">Interactive docs</div>
         </div>
       </a>
       <a class="lk l-stats" data-url="https://beldex-guide-project.vercel.app/beldex-stats.html">
-        <div class="lk-icon lki-green"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="9" width="3" height="6" rx="0.5"/><rect x="6.5" y="4" width="3" height="11" rx="0.5"/><rect x="12" y="1" width="3" height="14" rx="0.5"/></svg></div>
+        <div class="lk-icon lki-green"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="18" y="3" width="4" height="18"/><rect x="10" y="8" width="4" height="13"/><rect x="2" y="13" width="4" height="8"/></svg></div>
         <div class="lk-text">
           <div class="lk-title">Network Stats</div>
           <div class="lk-sub">Live dashboard</div>
         </div>
       </a>
       <a class="lk l-explorer" data-url="https://explorer.beldex.io">
-        <div class="lk-icon lki-cyan"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="7" cy="7" r="5"/><line x1="11" y1="11" x2="15" y2="15"/></svg></div>
+        <div class="lk-icon lki-cyan"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></div>
         <div class="lk-text">
           <div class="lk-title">Explorer</div>
           <div class="lk-sub">Blockchain data</div>
         </div>
       </a>
       <a class="lk l-beldex" data-url="https://beldex.io">
-        <div class="lk-icon lki-purple"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="8" r="7"/><ellipse cx="8" cy="8" rx="3" ry="7"/><line x1="1" y1="8" x2="15" y2="8"/></svg></div>
+        <div class="lk-icon lki-purple"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
         <div class="lk-text">
           <div class="lk-title">Beldex.io</div>
           <div class="lk-sub">Official site</div>
         </div>
       </a>
       <a class="lk l-bchat" data-url="https://bchat.beldex.io">
-        <div class="lk-icon lki-blue"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7.5a6.5 6.5 0 01-7 6.4L4 15l1.1-3.1A6.5 6.5 0 1115 7.5z"/></svg></div>
+        <div class="lk-icon lki-blue"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 7.5C14 4.5 11.3 2 8 2S2 4.5 2 7.5c0 1.7.8 3.2 2.1 4.2L3 14l2.8-1.4c.7.2 1.4.4 2.2.4 3.3 0 6-2.5 6-5.5z"/><circle cx="5.5" cy="7.5" r="0.7" fill="currentColor" stroke="none"/><circle cx="8" cy="7.5" r="0.7" fill="currentColor" stroke="none"/><circle cx="10.5" cy="7.5" r="0.7" fill="currentColor" stroke="none"/></svg></div>
         <div class="lk-text">
           <div class="lk-title">BChat</div>
           <div class="lk-sub">Private messenger</div>
         </div>
       </a>
       <a class="lk l-github" data-url="https://github.com/Beldex-Coin">
-        <div class="lk-icon lki-dim"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="5 3 1 8 5 13"/><polyline points="11 3 15 8 11 13"/></svg></div>
+        <div class="lk-icon lki-dim"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 1C4.1 1 1 4.1 1 8c0 3.1 2 5.7 4.8 6.6.4.1.5-.2.5-.4V13c-2 .4-2.4-1-2.4-1-.3-.8-.8-1-.8-1-.6-.4.1-.4.1-.4.7 0 1.1.7 1.1.7.6 1.1 1.7.8 2.1.6.1-.4.2-.8.4-1-1.6-.2-3.2-.8-3.2-3.5 0-.8.3-1.4.7-1.9-.1-.2-.3-.9.1-1.9 0 0 .6-.2 1.9.7a6.5 6.5 0 013.4 0c1.3-.9 1.9-.7 1.9-.7.4 1 .2 1.7.1 1.9.5.5.7 1.1.7 1.9 0 2.7-1.6 3.3-3.2 3.5.2.2.4.6.4 1.2v1.8c0 .2.1.5.5.4C13 13.7 15 11.1 15 8c0-3.9-3.1-7-7-7z"/></svg></div>
         <div class="lk-text">
           <div class="lk-title">GitHub</div>
           <div class="lk-sub">Open source</div>
@@ -881,7 +875,7 @@ body::after {
       </a>
     </div>
     <div class="privacy-banner">
-      <div class="pb-icon"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 1L2 4v4c0 4 2.5 6.5 6 8 3.5-1.5 6-4 6-8V4L8 1z"/></svg></div>
+      <div class="pb-icon"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 1L2 4v4c0 3.5 2.3 6 6 7.5 3.7-1.5 6-4 6-7.5V4L8 1z"/><path d="M6 8l1.5 1.5L10 6" opacity="0.6"/></svg></div>
       <div class="pb-text"><strong>Privacy tip:</strong> Withdrawing from an exchange? Use Beldex to break the on-chain trail, your transactions become fully untraceable.</div>
     </div>
   </div>
