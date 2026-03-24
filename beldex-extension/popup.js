@@ -317,19 +317,27 @@ function drawSparkline(prices) {
   const areaPath = `M0,${h} L${points.join(' L')} L${w},${h} Z`;
   const linePath = `M${points.join(' L')}`;
 
-  // SVG innerHTML is safe here — color is hardcoded, paths are numeric only
-  svg.innerHTML =
-    `<defs><linearGradient id="sfill" x1="0" y1="0" x2="0" y2="1">` +
-    `<stop offset="0%" stop-color="${color}" stop-opacity="0.25"/>` +
-    `<stop offset="100%" stop-color="${color}" stop-opacity="0"/>` +
-    `</linearGradient></defs>` +
-    `<path d="${areaPath}" fill="url(#sfill)"/>` +
-    `<path d="${linePath}" fill="none" stroke="${color}" stroke-width="1.5"/>`;
+  // Use safe DOM API for Mozilla compatibility
+  while (svg.firstChild) svg.removeChild(svg.firstChild);
+  const ns = 'http://www.w3.org/2000/svg';
+  const defs = document.createElementNS(ns, 'defs');
+  const lg = document.createElementNS(ns, 'linearGradient');
+  lg.id = 'sfill'; lg.setAttribute('x1', '0'); lg.setAttribute('y1', '0'); lg.setAttribute('x2', '0'); lg.setAttribute('y2', '1');
+  const s1 = document.createElementNS(ns, 'stop');
+  s1.setAttribute('offset', '0%'); s1.setAttribute('stop-color', color); s1.setAttribute('stop-opacity', '0.25');
+  const s2 = document.createElementNS(ns, 'stop');
+  s2.setAttribute('offset', '100%'); s2.setAttribute('stop-color', color); s2.setAttribute('stop-opacity', '0');
+  lg.appendChild(s1); lg.appendChild(s2); defs.appendChild(lg);
+  const p1 = document.createElementNS(ns, 'path');
+  p1.setAttribute('d', areaPath); p1.setAttribute('fill', 'url(#sfill)');
+  const p2 = document.createElementNS(ns, 'path');
+  p2.setAttribute('d', linePath); p2.setAttribute('fill', 'none'); p2.setAttribute('stroke', color); p2.setAttribute('stroke-width', '1.5');
+  svg.appendChild(defs); svg.appendChild(p1); svg.appendChild(p2);
 }
 
 // ── OPEN SIDE PANEL ──────────────────────────────────────────
 function openSidePanel() {
-  chrome.runtime.sendMessage({ action: 'openSidePanel' });
+  chrome.runtime.sendMessage({ action: 'openSidePanel' }).catch(() => {});
 }
 
 const chartBtn = g('open-chart-btn');

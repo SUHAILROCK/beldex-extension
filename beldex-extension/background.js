@@ -9,7 +9,6 @@ chrome.alarms.onAlarm.addListener(alarm => {
   if (alarm.name === 'bdx-refresh') refreshPrice();
 });
 
-// Listen for "open side panel" message from popup
 chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
   if (msg.action === 'openSidePanel') {
     chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
