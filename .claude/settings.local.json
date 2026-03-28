@@ -13,7 +13,8 @@
       "Bash(node --version)",
       "Bash(npm --version)",
       "Bash(node generate-icons.js)",
-      "Bash(npx --yes sharp-cli -i icons/icon128.svg -o icons/icon128.png)"
+      "Bash(npx --yes sharp-cli -i icons/icon128.svg -o icons/icon128.png)",
+      "Bash(head -3 \"c:/Users/saravanas/Downloads/beldex-extension-FINAL\\(1\\)/beldex-extension/libs/lightweight-charts.js\")"
     ]
   }
 }

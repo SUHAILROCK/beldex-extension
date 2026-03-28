@@ -127,6 +127,28 @@ async function fetchChartData(days) {
 
   try {
     const cur = currency;
+
+    // Skip fetch if cache is fresh AND matches current days + currency
+    const { chartCache } = await chrome.storage.local.get('chartCache');
+    if (chartCache && chartCache.days === days && chartCache.cur === cur &&
+        (Date.now() - chartCache.ts < CACHE_TTL) && chartCache.data) {
+      if (!chart) initChart();
+      if (!series) createSeries();
+      if (chartType === 'area') {
+        const data = chartCache.data.prices.map(([t, v]) => ({
+          time: Math.floor(t / 1000),
+          value: v,
+        }));
+        series.setData(data);
+      } else {
+        const candles = buildCandles(chartCache.data.prices, days);
+        series.setData(candles);
+      }
+      chart.timeScale().fitContent();
+      if (loading) loading.classList.add('hide');
+      return;
+    }
+
     const url = `${CG_BASE}/coins/beldex/market_chart?vs_currency=${cur}&days=${days}`;
     const r = await fetch(url, { signal: AbortSignal.timeout(FETCH_TIMEOUT) });
     if (!r.ok) throw new Error('CG chart ' + r.status);
@@ -148,6 +170,7 @@ async function fetchChartData(days) {
 
     chart.timeScale().fitContent();
 
+    // Save cache with currency so stale cross-currency data is avoided
     chrome.storage.local.set({ chartCache: { days, cur, data: d, ts: Date.now() } });
   } catch (e) {
     chrome.storage.local.get('chartCache', ({ chartCache }) => {
@@ -160,6 +183,9 @@ async function fetchChartData(days) {
           value: v,
         }));
         series.setData(data);
+      } else {
+        const candles = buildCandles(chartCache.data.prices, chartCache.days);
+        series.setData(candles);
       }
       chart.timeScale().fitContent();
     });
@@ -172,16 +198,16 @@ function buildCandles(prices, days) {
   const interval = days <= 1 ? 3600 : days <= 7 ? 14400 : days <= 30 ? 86400 : 604800;
   const buckets = {};
 
-  for (const [t, v] of prices) {
-    const sec = Math.floor(t / 1000);
+  for (const [ts, v] of prices) {  // renamed t→ts to avoid conflict with common.js helpers
+    const sec = Math.floor(ts / 1000);
     const bucket = Math.floor(sec / interval) * interval;
     if (!buckets[bucket]) {
       buckets[bucket] = { time: bucket, open: v, high: v, low: v, close: v };
     } else {
-      const c = buckets[bucket];
-      c.high = Math.max(c.high, v);
-      c.low = Math.min(c.low, v);
-      c.close = v;
+      const cb = buckets[bucket];  // renamed c→cb to avoid any block-scope confusion
+      cb.high = Math.max(cb.high, v);
+      cb.low = Math.min(cb.low, v);
+      cb.close = v;
     }
   }
 
@@ -198,26 +224,59 @@ document.querySelectorAll('.range-btn').forEach(btn => {
 });
 
 // ── CHART TYPE BUTTONS ───────────────────────────────────────
-g('ct-area').addEventListener('click', () => {
-  if (chartType === 'area') return;
-  chartType = 'area';
-  g('ct-area').classList.add('on');
-  g('ct-candle').classList.remove('on');
-  createSeries();
-  fetchChartData(currentDays);
-});
+const ctAreaBtn = g('ct-area');
+if (ctAreaBtn) {
+  ctAreaBtn.addEventListener('click', () => {
+    if (chartType === 'area') return;
+    chartType = 'area';
+    ctAreaBtn.classList.add('on');
+    const ctCandle = g('ct-candle');
+    if (ctCandle) ctCandle.classList.remove('on');
+    createSeries();
+    fetchChartData(currentDays);
+  });
+}
 
-g('ct-candle').addEventListener('click', () => {
-  if (chartType === 'candle') return;
-  chartType = 'candle';
-  g('ct-candle').classList.add('on');
-  g('ct-area').classList.remove('on');
-  createSeries();
-  fetchChartData(currentDays);
-});
+const ctCandleBtn = g('ct-candle');
+if (ctCandleBtn) {
+  ctCandleBtn.addEventListener('click', () => {
+    if (chartType === 'candle') return;
+    chartType = 'candle';
+    ctCandleBtn.classList.add('on');
+    const ctArea = g('ct-area');
+    if (ctArea) ctArea.classList.remove('on');
+    createSeries();
+    fetchChartData(currentDays);
+  });
+}
 
 // ── COINGECKO PRICE ──────────────────────────────────────────
 async function fetchPrice() {
+  // Step 1: show cache INSTANTLY
+  const { priceCache, marketCache } = await chrome.storage.local.get(['priceCache', 'marketCache']);
+
+  if (priceCache) {
+    priceUSD = priceCache.usd;
+    priceINR = priceCache.inr || 0;
+    const badge = g('sp-chg');
+    if (badge && priceCache.chg !== undefined) {
+      const chg = priceCache.chg;
+      badge.className = 'sp-change ' + (chg > 0 ? 'up' : chg < 0 ? 'dn' : 'nt');
+      badge.textContent = (chg >= 0 ? '▲ +' : '▼ ') + Math.abs(chg).toFixed(2) + '%  24H';
+    }
+  }
+  if (marketCache) {
+    marketData = marketCache.data;
+    updatePriceDisplay();
+    s('sp-ts', 'cached · ' + new Date(marketCache.ts).toLocaleTimeString());
+  } else if (priceCache) {
+    updatePriceDisplay();
+  }
+
+  // Step 2: skip live fetch if fresh
+  if (marketCache && (Date.now() - marketCache.ts < CACHE_TTL)) return;
+
+  // Step 3: silently refetch
   try {
     const r = await fetch(
       CG_BASE + '/coins/beldex?localization=false&tickers=false&community_data=false&developer_data=false',
@@ -240,21 +299,34 @@ async function fetchPrice() {
 
     s('sp-sup', (m.circulating_supply / 1e9).toFixed(2) + 'B BDX');
     s('sp-ts', now());
-
     updatePriceDisplay();
-  } catch (e) {
-    chrome.storage.local.get('priceCache', ({ priceCache }) => {
-      if (!priceCache) return;
-      priceUSD = priceCache.usd;
-      priceINR = priceCache.inr || 0;
-      updatePriceDisplay();
-      s('sp-ts', 'cached');
+
+    const ts = Date.now();
+    chrome.storage.local.set({
+      priceCache: { usd: priceUSD, inr: priceINR, chg, ts },
+      marketCache: { data: m, ts }
     });
-  }
+  } catch (e) { /* stale cache already rendered in Step 1 */ }
 }
 
 // ── NETWORK DATA ─────────────────────────────────────────────
 async function fetchNetwork() {
+  // Step 1: show cache INSTANTLY
+  const { netCache } = await chrome.storage.local.get('netCache');
+  if (netCache) {
+    if (netCache.blockHeight) s('sp-height', netCache.blockHeight.toLocaleString());
+    if (netCache.activeNodes) s('sp-nodes', netCache.activeNodes.toLocaleString());
+    if (netCache.burnedBDX)   s('sp-burned', (netCache.burnedBDX / 1e6).toFixed(3) + 'M BDX');
+    if (netCache.totalBNS)    s('sp-bns', netCache.totalBNS.toLocaleString());
+    s('sp-pool', (netCache.txPoolCount || 0).toString());
+    if (netCache.baseFeeOutput) s('sp-fee', netCache.baseFeeOutput + ' BDX');
+    s('sp-net-ts', 'cached · ' + new Date(netCache.ts).toLocaleTimeString());
+  }
+
+  // Step 2: skip if fresh
+  if (netCache && (Date.now() - netCache.ts < CACHE_TTL)) return;
+
+  // Step 3: silently refetch
   try {
     const r = await fetch(BDX_API_URL, {
       headers: { 'x-api-key': BDX_API_KEY },
@@ -272,18 +344,8 @@ async function fetchNetwork() {
     s('sp-pool', (d.txPoolCount || 0).toString());
     if (d.baseFeeOutput) s('sp-fee', d.baseFeeOutput + ' BDX');
     s('sp-net-ts', now());
-  } catch (e) {
-    chrome.storage.local.get('netCache', ({ netCache }) => {
-      if (!netCache) return;
-      if (netCache.blockHeight) s('sp-height', netCache.blockHeight.toLocaleString());
-      if (netCache.activeNodes) s('sp-nodes', netCache.activeNodes.toLocaleString());
-      if (netCache.burnedBDX)   s('sp-burned', (netCache.burnedBDX / 1e6).toFixed(3) + 'M BDX');
-      if (netCache.totalBNS)    s('sp-bns', netCache.totalBNS.toLocaleString());
-      s('sp-pool', (netCache.txPoolCount || 0).toString());
-      if (netCache.baseFeeOutput) s('sp-fee', netCache.baseFeeOutput + ' BDX');
-      s('sp-net-ts', 'cached');
-    });
-  }
+    chrome.storage.local.set({ netCache: { ...d, ts: Date.now() } });
+  } catch (e) { /* stale cache already rendered in Step 1 */ }
 }
 
 // ── INIT ─────────────────────────────────────────────────────

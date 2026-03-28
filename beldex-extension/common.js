@@ -31,4 +31,4 @@ const BDX_API_URL = 'https://bdx-companion-api.vercel.app/api/explorer';
 const BDX_API_KEY = 'bdx-comp-2024-s3cur3-k3y';
 const CG_BASE = 'https://api.coingecko.com/api/v3';
 const FETCH_TIMEOUT = 10000;
-const CACHE_TTL = 60000; // 60s — skip fetch if cache is fresh
+const CACHE_TTL = 300000; // 5 min — matches background alarm interval

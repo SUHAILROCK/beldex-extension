@@ -163,17 +163,32 @@ document.querySelectorAll('.lk[data-url]').forEach(lk => {
 
 // ── COINGECKO ─────────────────────────────────────────────────
 async function fetchPrice() {
-  try {
-    // Skip if cache is fresh (< 60s)
-    const { priceCache } = await chrome.storage.local.get('priceCache');
-    if (priceCache && (Date.now() - priceCache.ts < CACHE_TTL)) {
-      priceUSD = priceCache.usd;
-      priceINR = priceCache.inr || 0;
-      updatePriceDisplay();
-      s('price-ts', 'cached · ' + new Date(priceCache.ts).toLocaleTimeString());
-      return;
-    }
+  // Step 1: show cache INSTANTLY (stale-while-revalidate)
+  const { priceCache, marketCache } = await chrome.storage.local.get(['priceCache', 'marketCache']);
 
+  if (priceCache) {
+    priceUSD = priceCache.usd;
+    priceINR = priceCache.inr || 0;
+    const badge = g('price-chg');
+    if (badge && priceCache.chg !== undefined) {
+      const chg = priceCache.chg;
+      badge.className = 'ph-change ' + (chg > 0 ? 'up' : chg < 0 ? 'dn' : 'nt');
+      badge.textContent = (chg >= 0 ? '▲ +' : '▼ ') + Math.abs(chg).toFixed(2) + '%  24H';
+    }
+  }
+  if (marketCache) {
+    marketData = marketCache.data;
+    updatePriceDisplay();
+    s('price-ts', 'cached · ' + new Date(marketCache.ts).toLocaleTimeString());
+  } else if (priceCache) {
+    updatePriceDisplay();
+  }
+
+  // Step 2: return early if cache is still fresh
+  if (marketCache && (Date.now() - marketCache.ts < CACHE_TTL)) return;
+
+  // Step 3: silently refetch fresh data in background
+  try {
     const r = await fetch(
       CG_BASE + '/coins/beldex?localization=false&tickers=false&community_data=false&developer_data=false',
       { signal: AbortSignal.timeout(FETCH_TIMEOUT) }
@@ -192,35 +207,32 @@ async function fetchPrice() {
       badge.className = 'ph-change ' + (chg > 0 ? 'up' : chg < 0 ? 'dn' : 'nt');
       badge.textContent = (chg >= 0 ? '▲ +' : '▼ ') + Math.abs(chg).toFixed(2) + '%  24H';
     }
-
-    s('p-sup', (m.circulating_supply / 1e9).toFixed(2) + 'B BDX');
+    if (m.circulating_supply) s('p-sup', (m.circulating_supply / 1e9).toFixed(2) + 'B BDX');
     s('price-ts', now());
-
     updatePriceDisplay();
 
-    chrome.storage.local.set({ priceCache: { usd: priceUSD, inr: priceINR, chg, ts: Date.now() } });
-  } catch (e) {
-    chrome.storage.local.get('priceCache', ({ priceCache }) => {
-      if (!priceCache) return;
-      priceUSD = priceCache.usd;
-      priceINR = priceCache.inr || 0;
-      updatePriceDisplay();
-      s('price-ts', 'cached · ' + new Date(priceCache.ts).toLocaleTimeString());
+    const ts = Date.now();
+    chrome.storage.local.set({
+      priceCache: { usd: priceUSD, inr: priceINR, chg, ts },
+      marketCache: { data: m, ts }
     });
-  }
+  } catch (e) { /* stale cache already shown in Step 1 */ }
 }
 
 // ── NETWORK DATA ──────────────────────────────────────────────
 async function fetchNetwork() {
-  try {
-    // Skip if cache is fresh
-    const { netCache } = await chrome.storage.local.get('netCache');
-    if (netCache && (Date.now() - netCache.ts < CACHE_TTL)) {
-      renderNetwork(netCache);
-      s('net-ts', 'cached');
-      return;
-    }
+  // Step 1: show cache INSTANTLY
+  const { netCache } = await chrome.storage.local.get('netCache');
+  if (netCache) {
+    renderNetwork(netCache);
+    s('net-ts', 'cached · ' + new Date(netCache.ts).toLocaleTimeString());
+  }
 
+  // Step 2: return early if fresh
+  if (netCache && (Date.now() - netCache.ts < CACHE_TTL)) return;
+
+  // Step 3: silently refetch
+  try {
     const r = await fetch(BDX_API_URL, {
       headers: { 'x-api-key': BDX_API_KEY },
       signal: AbortSignal.timeout(FETCH_TIMEOUT)
@@ -229,19 +241,33 @@ async function fetchNetwork() {
     const j = await r.json();
     if (!j.ok) throw new Error(j.error);
     const d = j.data;
-
     renderNetwork(d);
     s('net-ts', now());
-
     chrome.storage.local.set({ netCache: { ...d, ts: Date.now() } });
-  } catch (e) {
-    chrome.storage.local.get('netCache', ({ netCache }) => {
-      if (!netCache) return;
-      renderNetwork(netCache);
-      s('net-ts', 'cached');
-      ['pip-height', 'pip-nodes', 'pip-burned', 'pip-bns', 'pip-pool'].forEach(dimPip);
-    });
-  }
+  } catch (e) { /* stale cache already shown in Step 1 */ }
+}
+
+// ── SPARKLINE ────────────────────────────────────────────────
+async function fetchSparkline() {
+  // Step 1: render cache instantly
+  const { sparkCache } = await chrome.storage.local.get('sparkCache');
+  if (sparkCache && sparkCache.prices) drawSparkline(sparkCache.prices);
+
+  // Step 2: skip if fresh and same currency
+  if (sparkCache && sparkCache.cur === currency && (Date.now() - sparkCache.ts < CACHE_TTL)) return;
+
+  // Step 3: silently refetch
+  try {
+    const cur = currency;
+    const r = await fetch(
+      `${CG_BASE}/coins/beldex/market_chart?vs_currency=${cur}&days=7`,
+      { signal: AbortSignal.timeout(FETCH_TIMEOUT) }
+    );
+    if (!r.ok) throw new Error('CG chart ' + r.status);
+    const d = await r.json();
+    drawSparkline(d.prices);
+    chrome.storage.local.set({ sparkCache: { cur, prices: d.prices, ts: Date.now() } });
+  } catch (e) { /* stale cache already shown in Step 1 */ }
 }
 
 function renderNetwork(d) {
@@ -269,31 +295,7 @@ function dimPip(id) {
   if (e) { e.style.background = '#4a6080'; e.style.boxShadow = 'none'; }
 }
 
-// ── SPARKLINE ────────────────────────────────────────────────
-async function fetchSparkline() {
-  try {
-    // Skip if cache is fresh
-    const { sparkCache } = await chrome.storage.local.get('sparkCache');
-    if (sparkCache && (Date.now() - sparkCache.ts < CACHE_TTL) && sparkCache.prices) {
-      drawSparkline(sparkCache.prices);
-      return;
-    }
 
-    const cur = currency;
-    const r = await fetch(
-      `${CG_BASE}/coins/beldex/market_chart?vs_currency=${cur}&days=7`,
-      { signal: AbortSignal.timeout(FETCH_TIMEOUT) }
-    );
-    if (!r.ok) throw new Error('CG chart ' + r.status);
-    const d = await r.json();
-    drawSparkline(d.prices);
-    chrome.storage.local.set({ sparkCache: { cur, prices: d.prices, ts: Date.now() } });
-  } catch (e) {
-    chrome.storage.local.get('sparkCache', ({ sparkCache }) => {
-      if (sparkCache && sparkCache.prices) drawSparkline(sparkCache.prices);
-    });
-  }
-}
 
 function drawSparkline(prices) {
   const svg = g('sparkline-svg');
